@@ -1,4 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Este stack va a crear
+  una instancia y todo lo
+  que necesita
 Resources:
-  EC2I1YCWI:
+  WebServer:
     Type: 'AWS::EC2::Instance'
-    Properties: {}
+    Properties: 
+      ImageId: "ami-03ededff12e34e59e"
