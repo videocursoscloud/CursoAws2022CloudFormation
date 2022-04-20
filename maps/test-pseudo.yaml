@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Outputs:
+  MiRegion:
+    Description: Region
+    Value: !Ref "AWS::Region"
+  MiCuenta:
+    Description: Cuenta
+    Value: !Ref "AWS::AccountId"
+  MiOutput:
+    Description: cualquiercosa
+    Value: !FindInMap [Mapping01, Key03 , Name]
+  MiOutput2:
+    Description: MiOutput2
+    Value: !FindInMap [Regiones, !Ref "AWS::Region" , AmiId]
+
+Mappings: 
+  Regiones:
+    eu-west-1:
+      AmiId: "i-xxxxxxx"
+    us-east-1:
+      AmiId: "i-yyyyyy"
+  Mapping01: 
+    Key01: 
+      Name: Value01
+    Key02: 
+      Name: Value02
+    Key03: 
+      Name: Value03
+
+
+Resources:
+  SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group que permite acceso ssh"
+      VpcId: "vpc-04e74c746436e103a"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0         
+  

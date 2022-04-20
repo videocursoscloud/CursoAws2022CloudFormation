@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Este stack va a crear
+  una instancia y todo lo
+  que necesita prod
+Resources:
+  WebServerNestedstack:
+    Type: AWS::CloudFormation::Stack
+    Properties: 
+      TemplateURL: "https://vcc-cf-templates-tests.s3.amazonaws.com/maps/webserver.yaml"
+      Parameters: 
+        KeyPairParameter: "keypair-pruebas-cf"
+        VpcIdParameter: "vpc-04e74c746436e103a"
+        OsName: "amazonlinux"
