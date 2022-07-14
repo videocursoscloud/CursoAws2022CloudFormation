@@ -1,0 +1,25 @@
+{
+    "typeName": "Videocursoscloud::S3::Bucket::MODULE",
+    "description": "Schema for Module Fragment of type Videocursoscloud::S3::Bucket::MODULE",
+    "properties": {
+        "Resources": {
+            "properties": {
+                "KeyPair": {
+                    "type": "object",
+                    "properties": {
+                        "Type": {
+                            "type": "string",
+                            "const": "AWS::EC2::KeyPair"
+                        },
+                        "Properties": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "type": "object",
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": true
+}

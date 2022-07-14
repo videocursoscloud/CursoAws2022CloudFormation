@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create a S3 bucket that follows MyCompany's standards"
+Resources:
+  KeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: MyKey
+      PublicKeyMaterial: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDHrzbqn+2rIf5res4z+JzSnzv2GHlfIhLYIho2UKyur9kePgn/qRdqY4Tm0Z7PfTeepLCwef2wOWm0rVRarfu2OmQ9sOe2WDYUe7H1VisB4QtiLBTlNgS7aQeYMAeJxs0S17LA0h/f2ikydRTzDMIDaNQ45P6hoFqdWa94aEKcCDngswLXCKBWLb0i8yn5SScDq+RLN9hbrl/tx7Bjb13SBcL21KRsLIQig8vzawuwCzRUUxK5RRzeyEyT19OLsf/V31CyTtwMV/C2uI6ddVVtnaQZn5ddnLLykJ9Na93QqP5O6saDIFbDVFgHtr3hLXGKKpB9JVuagCvQHq7K1aDy4/cBRo40PR0d9jxaivUf9dLo3KoTMH6Umma6Wu5EV0HmW/6RhuxEnjdA7Dj93CVNpX4lZPVED6adUdBkvTLMscEJqGNYyjF9m7CoXDOu5Yi9iuk7KPRHTGYocvj5/GPVA+8c0wDoRg/dIJaH4PqiYIG+CGry4lfepr2cqNsTQxU= mijack@ubuntu2022"
+

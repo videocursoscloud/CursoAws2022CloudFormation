@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Este stack va a crear
+  una instancia y todo lo
+  que necesita
+
+Parameters:
+  VpcIdParameter:
+    Type: String
+  KeyPairParameter:
+    Type: String
+  AmiIdParameter:
+    Type: String
+
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small    
+      - t2.micro
+    Description: El tipo de instancia a crear
+
+Outputs:
+  IdInstancia:
+    Description: Id De la instancia que hemos creado
+    Value: 
+      Ref: WebServer
+
+
+
+Resources:
+  WebServer:
+    Type: 'AWS::EC2::Instance'
+    Properties: 
+      ImageId: 
+        Ref: AmiIdParameter
+      KeyName: 
+        Ref: KeyPairParameter
+      InstanceType: 
+        Ref: InstanceTypeParameter
+      SecurityGroupIds: 
+        - Ref: SecurityGroupSSH
+      IamInstanceProfile: 
+        Ref: InstanceProfileWebserver        
+
+
+  SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group que permite acceso ssh"
+      VpcId: 
+        Ref: VpcIdParameter
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0         
+  IAMRoleWebserver:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'  
+  InstanceProfileWebserver:  
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      Roles: 
+        - Ref: IAMRoleWebserver              
+  S3AccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: s3_access_websever
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: 's3:*'
+            Resource: '*'
+      Roles:
+        - Ref: IAMRoleWebserver        
+  EC2AccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ec2_access_websever
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: 'ec2:*'
+            Resource: '*'
+      Roles:
+        - Ref: IAMRoleWebserver                

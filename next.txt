@@ -1,0 +1,6 @@
+transform
+cloudformation helper scripts
+Logic: If
+registry
+Ejemplos: Desplegar una instancia con user-data
+Ejemplos: Desplegar una instancia a traves de un autoscaling y esperar a que se lancen las instancias

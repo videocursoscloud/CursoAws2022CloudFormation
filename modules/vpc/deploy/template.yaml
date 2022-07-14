@@ -1,0 +1,6 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "Create a KeyPair through a module"
+Resources:
+  KeyPair:
+    Type: Videocursoscloud::S3::Bucket::MODULE
+
