@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Este stack va a crear
+  una instancia y todo lo
+  que necesita
+
+Parameters:
+  VpcIdParameter:
+    Type: String
+  ASGSubnet1Id:
+    Type: String
+  ASGSubnet2Id:
+    Type: String
+  LBSubnet1Id:
+    Type: String
+  LBSubnet2Id:
+    Type: String    
+  KeyPairParameter:
+    Type: String
+  AmiIdParameter:
+    Type: String
+  Environment: 
+    Type: String
+    AllowedValues:
+      - prod
+      - staging
+
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small    
+      - t2.micro
+    Description: El tipo de instancia a crear
+
+
+Resources:
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties: 
+      Listeners:
+        - InstancePort: 80
+          InstanceProtocol: HTTP
+          LoadBalancerPort: 80
+          Protocol: HTTP
+      SecurityGroups: 
+        - !Ref SecurityGroupLB
+      Subnets: 
+        - !Ref LBSubnet1Id
+        - !Ref LBSubnet2Id
+      LoadBalancerName: 
+        !Join 
+        - '-'
+        - - vcc-asg-p1
+          - !Ref Environment        
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties: 
+      LoadBalancerNames:
+        - !Ref LoadBalancer
+      AutoScalingGroupName: 
+        !Join 
+        - '-'
+        - - vcc-asg-p1
+          - !Ref Environment
+      DesiredCapacity: 2
+      MaxSize: 5
+      MinSize: 1
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      VPCZoneIdentifier: 
+        - !Ref ASGSubnet1Id
+        - !Ref ASGSubnet2Id
+
+        
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: 
+        !Join 
+        - '-'
+        - - vcc-asg-p1
+          - !Ref Environment
+      LaunchTemplateData:
+        ImageId: !Ref AmiIdParameter
+        InstanceType: !Ref InstanceTypeParameter
+        KeyName: !Ref KeyPairParameter
+        SecurityGroupIds:
+          - Ref: SecurityGroupInstances
+        UserData: IyEvYmluL2Jhc2gKCnN1ZG8gYXB0IHVwZGF0ZQpzdWRvIGFwdCBpbnN0YWxsIG5naW54IC15CgplY2hvICdob2xhIG11bmRvJ3xzdWRvIHRlZSAvdmFyL3d3dy9odG1sL2luZGV4Lmh0bWwK
+
+  SecurityGroupInstances:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group que permite acceso web desde el lb"
+      VpcId: 
+        Ref: VpcIdParameter
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 172.31.0.0/16
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0  
+
+ 
+
+  SecurityGroupLB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group para el lb"
+      VpcId: 
+        Ref: VpcIdParameter
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0  

@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Este stack va a crear
+  una instancia y todo lo
+  que necesita
+
+Parameters:
+  VpcIdParameter:
+    Type: String
+  ASGSubnet1Id:
+    Type: String
+  ASGSubnet2Id:
+    Type: String
+  KeyPairParameter:
+    Type: String
+  AmiIdParameter:
+    Type: String
+  Environment: 
+    Type: String
+    AllowedValues:
+      - prod
+      - staging
+
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t3.micro
+      - t3.small    
+      - t2.micro
+    Description: El tipo de instancia a crear
+
+
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties: 
+      AutoScalingGroupName: 
+        !Join 
+        - '-'
+        - - vcc-asg-p1
+          - !Ref Environment
+      DesiredCapacity: 2
+      MaxSize: 5
+      MinSize: 1
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      VPCZoneIdentifier: 
+        - !Ref ASGSubnet1Id
+        - !Ref ASGSubnet2Id
+
+        
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: 
+        !Join 
+        - '-'
+        - - vcc-asg-p1
+          - !Ref Environment
+      LaunchTemplateData:
+        ImageId: !Ref AmiIdParameter
+        InstanceType: !Ref InstanceTypeParameter
+        KeyName: !Ref KeyPairParameter
+        SecurityGroupIds:
+          - Ref: SecurityGroupSSH
+        UserData: IyEvYmluL2Jhc2gKCnN1ZG8gYXB0IHVwZGF0ZQpzdWRvIGFwdCBpbnN0YWxsIG5naW54IC15CgplY2hvICdob2xhIG11bmRvJ3xzdWRvIHRlZSAvdmFyL3d3dy9odG1sL2luZGV4Lmh0bWwK
+
+  SecurityGroupSSH:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group que permite acceso ssh"
+      VpcId: 
+        Ref: VpcIdParameter
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0  
+
+  SecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties: 
+      CidrIp: 0.0.0.0/0
+      Description: Access from everywhere networks
+      FromPort: 80
+      IpProtocol: tcp
+      ToPort: 80
+      GroupId: !Ref SecurityGroupSSH    
+

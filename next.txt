@@ -1,6 +1,11 @@
-transform
+Desplegar una instancia con user-data
+
+Autoscaling group: opciones avanzadas como wait state
+
+Desplegar una instancia con user-data y autoscaling
+Desplegar una instancia a traves de un autoscaling y esperar a que se lancen las instancias
+
 cloudformation helper scripts
-Logic: If
-registry
-Ejemplos: Desplegar una instancia con user-data
-Ejemplos: Desplegar una instancia a traves de un autoscaling y esperar a que se lancen las instancias
+
+
+Laboratorio final, pedir opinion
